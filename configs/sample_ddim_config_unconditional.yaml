@@ -1,0 +1,41 @@
+defaults:
+  - _self_
+  - override hydra/hydra_logging: disabled
+  - override hydra/job_logging: disabled
+checkpoint:
+  path: "./IDPerturb/ema_averaged_model_250000.ckpt" 
+  global_step: null
+  use_non_ema: True
+
+diffusion_cfg_path: "/workspace/IDPerturb/configs/model/unet_cond_ca_cpd25_uncond20.yaml" 
+
+VQEncoder_path: "/workspace/IDPerturb/models/autoencoder/first_stage_encoder_state_dict.pt"
+VQDecoder_path: "/workspace/IDPerturb/models/autoencoder/first_stage_decoder_state_dict.pt"
+
+sampling:
+  gpu_idx: 0
+  seed: 1205
+  save_dir: "/workspace/IDPerturb/reference"
+  save_mode: rgb   
+  batch_size: 200          
+  n_contexts: 100000 
+  num_workers: 1
+  pin_memory: true
+  n_samples_per_context: 1
+  fixe_context: true
+  context_smoothing: true
+  nosie_injection: false
+  step_threshold: 1.2
+  min_cos: 0.4
+  save_min_cos: true
+  max_cos: 1.0
+  two_stage: false
+  sample_config:
+    cfg_scale: 1.0 
+    MSE_th: 0.006
+    step_th: 500
+
+hydra:
+  output_subdir: null
+  run:
+    dir: .
