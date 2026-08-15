@@ -84,42 +84,6 @@ class DenoisingDiffusionProbabilisticModel(torch.nn.Module):
 
         return 0.5 * (1 + torch.cos(torch.pi * alpha))
     
-    def smooth_batch_vectors(self, V_norm, s, min_cos=0.95, max_cos=1.0):
-        """
-        V: (n, 512) batch of vectors
-        t: scalar or tensor in [0,1] controlling progress
-        Returns smoothed vectors with target cosine similarity.
-        """
-
-        # 1. Normalize input vectors
-        #V_norm = F.normalize(V, dim=1)  # (n, 512)
-
-        # 2. Compute target cosine similarity in [-1, 1]
-        cos_target = min_cos + s * (max_cos - min_cos)  # scalar or (n,)
-
-        # If scalar t, expand to (n,)
-        if cos_target.ndim == 0:
-            cos_target = cos_target.expand(V_norm.size(0))
-
-        # 3. Compute corresponding sin(θ)
-        sin_target = torch.sqrt(1.0 - cos_target**2 + 1e-8)  # add epsilon for safety
-
-        # 4. Sample random noise
-        noise = torch.randn_like(V_norm)
-
-        # 5. Remove projection on V (orthogonalize)
-        proj = (noise * V_norm).sum(dim=1, keepdim=True) * V_norm
-        noise_orth = noise - proj
-
-        # 6. Normalize noise
-        noise_orth_norm = F.normalize(noise_orth, dim=1)
-
-        # 7. Combine
-        cos_target = cos_target.unsqueeze(1)  # (n, 1)
-        sin_target = sin_target.unsqueeze(1)  # (n, 1)
-
-        V_smooth = cos_target * V_norm + sin_target * noise_orth_norm
-        return V_smooth
 
     def sample_ddim(
         self,
