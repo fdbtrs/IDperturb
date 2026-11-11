@@ -1,0 +1,11 @@
+diffusers==0.23.0
+easydict==1.13
+matplotlib==3.10.6
+numpy==1.26.4
+pandas==2.3.1
+pyeer==0.5.6
+scipy==1.15.3
+torch==2.14.1
+torchvision==0.29.1
+tqdm==4.67.1
+# normflows for flow models
